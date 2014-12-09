@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>lazyElem</title>
+    <style type="text/css">
+    * { margin:0; padding:0;}
+    ul { list-style:none;}
+    .wrapper { width:990px; margin:50px auto; overflow:hidden;}
+    .image li { float:left; margin:20px 20px 0 0;}
+    .image li img { width:286px; height:360px;}
+    .dom { height:410px;}
+    .fn li { float:left; width:200px; height:200px; margin-right:20px; background:#EEE;}
+    .lazy-loading { background:url(loading.gif) no-repeat center center;}
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <ul class="image">
+            <li><img lazy-src="temp/1.jpg" alt="" /></li>
+            <li><img lazy-src="temp/2.jpg" alt="" /></li>
+            <li><img lazy-src="temp/3.jpg" alt="" /></li>
+            <li><img lazy-src="temp/4.jpg" alt="" /></li>
+            <li><img lazy-src="temp/1.jpg" alt="" /></li>
+            <li><img lazy-src="temp/2.jpg" alt="" /></li>
+            <li><img lazy-src="temp/3.jpg" alt="" /></li>
+            <li><img lazy-src="temp/4.jpg" alt="" /></li>
+            <li><img lazy-src="temp/1.jpg" alt="" /></li>
+            <li><img lazy-src="temp/2.jpg" alt="" /></li>
+            <li><img lazy-src="temp/3.jpg" alt="" /></li>
+            <li><img lazy-src="temp/4.jpg" alt="" /></li>
+            <li><img lazy-src="temp/1.jpg" alt="" /></li>
+            <li><img lazy-src="temp/2.jpg" alt="" /></li>
+            <li><img lazy-src="temp/3.jpg" alt="" /></li>
+        </ul>
+    </div>
+
+    <div class="wrapper">
+        <div class="dom">
+            <script type="text/html">
+            <h3>这是一整段DOM懒加载</h3>
+            <ul class="image">
+                <li><img src="temp/2.jpg" alt="" /></li>
+                <li><img src="temp/2.jpg" alt="" /></li>
+                <li><img src="temp/2.jpg" alt="" /></li>
+            </ul>
+            </script>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="dom">
+            <script type="text/html">
+            <h3>这是一整段DOM懒加载</h3>
+            <ul class="image">
+                <li><img src="temp/3.jpg" alt="" /></li>
+                <li><img src="temp/3.jpg" alt="" /></li>
+                <li><img src="temp/3.jpg" alt="" /></li>
+            </ul>
+            </script>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <ul class="fn fn-1">
+            <li id="testfn-1"></li>
+            <li id="testfn-2"></li>
+            <li id="testfn-3"></li>
+            <li id="testfn-4"></li>
+        </ul>
+    </div>
+
+    <div class="wrapper">
+        <ul class="fn fn-2">
+            <li title="111"></li>
+            <li title="222"></li>
+            <li title="333"></li>
+            <li title="444"></li>
+        </ul>
+    </div>
+
+    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../lazyElem.js"></script>
+    <script type="text/javascript">
+        // 纯图片
+        lazyelem.listen();
+
+        // DOM
+        lazyelem.listen('.dom', 'dom');
+
+        // FUNCTION
+        lazyelem.listen('.fn-1 li', 'function', function(obj) {
+            obj.text('我的ID是' + obj.attr('id'));
+        });
+        lazyelem.listen('.fn-2 li', 'function', function(obj) {
+            obj.text('我的title是' + obj.attr('title'));
+        });
+    </script>
+
+</body>
+
+</html>

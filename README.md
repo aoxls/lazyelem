@@ -1,4 +1,4 @@
-lazyelem
+lazyElem
 ========
 
-lazyloader for html elements.
+lazyloader for html elements
