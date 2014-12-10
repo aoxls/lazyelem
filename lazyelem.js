@@ -22,9 +22,10 @@
         // 默认配置
         config = {
             timeout: 100,
-            buffer: 50,
+            buffer: 100,
             loadingClass: 'lazy-loading',
-            srcName: 'lazy-src'
+            srcValue: 'lazy-src',
+            bgValue: 'lazy-bg'
         },
 
         that, timer;
@@ -48,12 +49,12 @@
          * 添加监听元素
          * @method listen
          * @param {String} selector 用于选中元素的jQuery选择器
-         * @param {String} type 元素类型，可用值 'image'|'dom'|'function'
+         * @param {String} type 元素类型，可用值 'img'|'bg'|dom'|'fn'
          * @param {Function} callback 加载后的回调函数 参数1:当前触发加载条件的jquery对象
          */
         listen: function(selector, type, callback) {
-            var elements = $(selector || 'img[' + config.srcName + ']'),
-                eType = type || 'image',
+            var elements = $(selector || 'img[' + config.srcValue + ']'),
+                eType = type || 'img',
                 cbIndex;
 
             // 注册回调函数
@@ -77,21 +78,25 @@
 
             // 第一次调用时绑定窗口滚动事件
             if (!isListening) {
-                that._bindScroll();
+                that._startListen();
             }
 
             that.detect();
         },
 
         /**
-         * 绑定窗口滚动监听事件
-         * @method _bindScroll
+         * 绑定窗口监听事件
+         * @method _startListen
          */
-        _bindScroll: function() {
+        _startListen: function() {
             $win.bind('scroll.lazyelem', function() {
                 timer = setTimeout(function() {
                     that.detect();
                 }, config.timeout);
+            });
+
+            $win.bind('resize.lazyelem', function() {
+                that.detect();
             });
 
             isListening = true;
@@ -118,11 +123,15 @@
 
                 // 开始加载
                 switch(listener.type) {
-                    case 'function':
+                    case 'fn':
                         break;
 
-                    case 'image':
-                        obj.attr('src', obj.attr(config.srcName)).removeAttr(config.srcName);
+                    case 'img':
+                        obj.attr('src', obj.attr(config.srcValue)).removeAttr(config.srcValue);
+                        break;
+
+                    case 'bg':
+                        obj.css('background-image', 'url(' + obj.attr(config.bgValue) + ')').removeAttr(config.bgValue);
                         break;
 
                     case 'dom':
@@ -142,9 +151,9 @@
                 listeners.splice(i--, 1);
             }
 
-            // 当所有元素加载完毕，停止滚动监听
+            // 当所有元素加载完毕，停止监听
             if (listeners.length === 0) {
-                $win.unbind('scroll.lazyelem');
+                $win.unbind('scroll.lazyelem resize.lazyelem');
             }
         },
 
@@ -186,7 +195,7 @@
         /**
          * 配置参数
          * @method config
-         * @param {Object} opt 配置项 timeout|buffer|loadingClass|srcName
+         * @param {Object} opt 配置项 timeout|buffer|loadingClass|srcValue|bgValue
          */
         config: function(opt) {
             $.extend(config, opt);
