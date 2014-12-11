@@ -21,7 +21,7 @@
 
         // 默认配置
         config = {
-            timeout: 100,
+            timeout: 10,
             buffer: 100,
             loadingClass: 'lazy-loading',
             srcValue: 'lazy-src',
@@ -90,6 +90,8 @@
          */
         _startListen: function() {
             $win.bind('scroll.lazyelem', function() {
+                clearTimeout(timer);
+                
                 timer = setTimeout(function() {
                     that.detect();
                 }, config.timeout);
