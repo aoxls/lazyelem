@@ -88,3 +88,12 @@ lazyelem.config({
     bgValue: 'lazy-bg'
 });
 ```
+
+## Method
+
+### detect
+
+某些需要在特定事件中加载的内容，可以在各自的事件处理逻辑后调用此方法，以展示原本被隐藏的内容。
+```js
+lazyelem.detect();
+```
