@@ -10,7 +10,7 @@
 
     var $win = $(window),
 
-        // 是否开启滚动监听
+        // 滚动监听是否开启
         isListening = false,
 
         // 被监听的元素集合
@@ -90,6 +90,10 @@
          */
         _startListen: function() {
             $win.bind('scroll.lazyelem', function() {
+                if (!listeners.length) {
+                    return;
+                }
+
                 clearTimeout(timer);
                 
                 timer = setTimeout(function() {
@@ -98,6 +102,10 @@
             });
 
             $win.bind('resize.lazyelem', function() {
+                if (!listeners.length) {
+                    return;
+                }
+
                 that.detect();
             });
 
@@ -113,13 +121,8 @@
                 var listener = listeners[i],
                     obj = listener.obj;
 
-                // 若元素不可见，则跳过
-                if (obj.is(':hidden')) {
-                    continue;
-                }
-
-                // 是否触发加载条件
-                if (!that._isInScreen(obj)) {
+                // 以下情况直接跳过本次循环： 元素不可见 | 不在屏幕区域内
+                if (obj.is(':hidden') || !that._isInScreen(obj)) {
                     continue;
                 }
 
@@ -129,18 +132,21 @@
                         break;
 
                     case 'img':
-                        obj.attr('src', obj.attr(config.srcValue)).removeAttr(config.srcValue);
+                        var src = obj.attr(config.srcValue);
+                        src && obj.attr('src', src).removeAttr(config.srcValue);
                         break;
 
                     case 'bg':
-                        obj.css('background-image', 'url(' + obj.attr(config.bgValue) + ')').removeAttr(config.bgValue);
+                        var bg = obj.attr(config.bgValue);
+                        bg && obj.css('background-image', 'url(' + bg + ')').removeAttr(config.bgValue);
                         break;
 
                     case 'dom':
                         var script = obj.children('script');
-                        script.replaceWith(that._minHtml(script.html()));
+                        script.length && script.replaceWith(that._minHtml(script.html()));
                         break;
                 }
+
                 // 调用回调函数
                 if (listener.callback) {
                     listener.callback(obj);
@@ -153,10 +159,10 @@
                 listeners.splice(i--, 1);
             }
 
-            // 当所有元素加载完毕，停止监听
-            if (listeners.length === 0) {
-                $win.unbind('scroll.lazyelem resize.lazyelem');
-            }
+            // 当所有元素加载完毕，停止监听，（后来发现如果第一次调用listen方法的时候获取元素个数为0，会直接停止监听，先取消此功能）
+            // if (listeners.length === 0) {
+            //     $win.unbind('scroll.lazyelem resize.lazyelem');
+            // }
         },
 
         /**

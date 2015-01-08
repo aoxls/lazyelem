@@ -4,7 +4,12 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jshint: {
-            all: ['lazyelem.js']
+            ignore_warning: {
+                options: {
+                    '-W030': true,
+                },
+                src: ['lazyelem.js'],
+            }
         },
 
         uglify: {
