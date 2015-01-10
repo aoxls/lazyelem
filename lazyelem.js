@@ -76,7 +76,7 @@
                 o.addClass(config.loadingClass);
             });
 
-            // 第一次调用时绑定窗口滚动事件
+            // 启动窗口滚动事件监听
             if (!isListening) {
                 that._startListen();
             }
@@ -89,7 +89,7 @@
          * @method _startListen
          */
         _startListen: function() {
-            $win.bind('scroll.lazyelem', function() {
+            $win.bind('scroll.lazyelem resize.lazyelem', function() {
                 if (!listeners.length) {
                     return;
                 }
@@ -99,14 +99,6 @@
                 timer = setTimeout(function() {
                     that.detect();
                 }, config.timeout);
-            });
-
-            $win.bind('resize.lazyelem', function() {
-                if (!listeners.length) {
-                    return;
-                }
-
-                that.detect();
             });
 
             isListening = true;
@@ -122,7 +114,7 @@
                     obj = listener.obj;
 
                 // 以下情况直接跳过本次循环： 元素不可见 | 不在屏幕区域内
-                if (obj.is(':hidden') || !that._isInScreen(obj)) {
+                if (obj.is(':hidden') || !that._isTrigger(obj)) {
                     continue;
                 }
 
@@ -159,19 +151,20 @@
                 listeners.splice(i--, 1);
             }
 
-            // 当所有元素加载完毕，停止监听，（后来发现如果第一次调用listen方法的时候获取元素个数为0，会直接停止监听，先取消此功能）
-            // if (listeners.length === 0) {
-            //     $win.unbind('scroll.lazyelem resize.lazyelem');
-            // }
+            // 当所有元素加载完毕，停止监听
+            if (listeners.length === 0) {
+                $win.unbind('scroll.lazyelem resize.lazyelem');
+                isListening = false;
+            }
         },
 
         /**
          * 判断一个jquery对象是否在屏幕区域之间
-         * @method _isInScreen
+         * @method _isTrigger
          * @param {jQuery Object} obj 单个jquery对象
          * @return {Boolean}
          */
-        _isInScreen: function(obj) {
+        _isTrigger: function(obj) {
             var winHeight = $win.height(),
                 winTop = $win.scrollTop(),
                 oHeight = obj.height(),
