@@ -48,14 +48,19 @@
         /**
          * 添加监听元素
          * @method listen
-         * @param {String} selector 用于选中元素的jQuery选择器
+         * @param {String|Object} selector 用于选中元素的jQuery选择器,或直接传入一组jQuery对象
          * @param {String} type 元素类型，可用值 'img'|'bg'|dom'|'fn'
          * @param {Function} callback 加载后的回调函数 参数1:当前触发加载条件的jquery对象
          */
         listen: function(selector, type, callback) {
-            var elements = $(selector || 'img[' + config.srcValue + ']'),
+            var elements = selector,
                 eType = type || 'img',
                 cbIndex;
+
+            // 判断传入的是否选择器
+            if ((typeof selector).toLowerCase() != 'object') {
+                elements = $(selector || 'img[' + config.srcValue + ']');
+            }
 
             // 注册回调函数
             if (callback) {
@@ -73,7 +78,9 @@
                 });
 
                 // 加上loading class
-                o.addClass(config.loadingClass);
+                if (eType == 'img') {
+                    o.addClass(config.loadingClass);
+                }
             });
 
             // 启动窗口滚动事件监听
@@ -139,16 +146,16 @@
                         break;
                 }
 
+                // 去掉loading class
+                // obj.removeClass(config.loadingClass);
+
+                // 删除该项
+                listeners.splice(i--, 1);
+
                 // 调用回调函数
                 if (listener.callback) {
                     listener.callback(obj);
                 }
-
-                // 去掉loading class
-                obj.removeClass(config.loadingClass);
-
-                // 删除该项
-                listeners.splice(i--, 1);
             }
 
             // 当所有元素加载完毕，停止监听

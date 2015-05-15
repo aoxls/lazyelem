@@ -73,6 +73,12 @@ lazyelem.listen('.fn li', 'fn', function(obj) {
 });
 ```
 
+### 自定义监听范围
+可直接将一组jQuery对象作为第一个参数传入
+```js
+lazyelem.listen($('.my-elements'), 'fn');
+```
+
 ### Loading样式
 lazyelem会给每个被监听的元素加上一个class：`lazy-loading`，可以在项目的css中设置loading效果。
 
