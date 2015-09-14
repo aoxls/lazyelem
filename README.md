@@ -73,18 +73,27 @@ lazyelem.listen('.fn li', 'fn', function(obj) {
 });
 ```
 
-### 自定义监听范围
+### 批量处理被加载对象
+将类型设置为bat，回调函数中的参数为触发加载条件的元素的jQuery对象的数组
+```js
+lazyelem.listen('.fn-group li', 'bat', function(objs) {
+    console.log(objs);
+});
+```
+
+
+### 自定义监听对象
 可直接将一组jQuery对象作为第一个参数传入
 ```js
 lazyelem.listen($('.my-elements'), 'fn');
 ```
 
 ### Loading样式
-lazyelem会给每个被监听的元素加上一个class：`lazy-loading`，可以在项目的css中设置loading效果。
+lazyelem会给每个被监听的img元素加上一个class：`lazy-loading`，可以在项目的css中设置loading效果。
 
 
 ## Configuration
-目前提供5个配置项，通过config方法设置,要在listen方法前调用。
+目前提供5个配置项，通过`config`方法设置,要在listen方法前调用。
 ```js
 lazyelem.config({
     timeout: 10, // 每次滚动事件执行延迟
