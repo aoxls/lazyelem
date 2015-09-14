@@ -15,6 +15,7 @@
 
         // 被监听的元素集合
         listeners = [],
+        groups = {},
 
         // 回调函数集合
         callbacks = [],
@@ -54,7 +55,7 @@
          */
         listen: function(selector, type, callback) {
             var elements = selector,
-                eType = type || 'img',
+                eType = (type || 'img').toLowerCase(),
                 cbIndex;
 
             // 判断传入的是否选择器
@@ -66,15 +67,22 @@
             if (callback) {
                 cbIndex = callbacks.push(callback) - 1;
             }
+            // 添加批处理组
+            if (eType === 'bat') {
+                groups[cbIndex] = {
+                    objs: [],
+                    cbIndex: cbIndex
+                };
+            }
 
-            // 添加元素
+            // 添加监听元素
             elements.each(function() {
                 var o = $(this);
 
                 listeners.push({
                     type: eType,
                     obj: o,
-                    callback: callback ? callbacks[cbIndex] : null
+                    cbIndex: cbIndex
                 });
 
                 // 加上loading class
@@ -118,7 +126,8 @@
         detect: function() {
             for (var i = 0; i < listeners.length; i++) {
                 var listener = listeners[i],
-                    obj = listener.obj;
+                    obj = listener.obj,
+                    cbIndex = listener.cbIndex;
 
                 // 以下情况直接跳过本次循环： 元素不可见 | 不在屏幕区域内
                 if (obj.is(':hidden') || !that._isTrigger(obj)) {
@@ -144,24 +153,47 @@
                         var script = obj.children('script');
                         script.length && script.replaceWith(that._minHtml(script.html()));
                         break;
-                }
 
-                // 去掉loading class
-                // obj.removeClass(config.loadingClass);
+                    case 'bat':
+                        groups[cbIndex].objs.push(obj);
+                        break;
+                }
 
                 // 删除该项
                 listeners.splice(i--, 1);
 
                 // 调用回调函数
-                if (listener.callback) {
-                    listener.callback(obj);
+                if (listener.type !== 'bat' && cbIndex >= 0) {
+                    callbacks[cbIndex](obj);
                 }
             }
+
+            // 批处理
+            that._bat();
 
             // 当所有元素加载完毕，停止监听
             if (listeners.length === 0) {
                 $win.unbind('scroll.lazyelem resize.lazyelem');
                 isListening = false;
+            }
+        },
+
+        /**
+         * 批量处理懒加载元素
+         * @method _bat
+         */
+        _bat: function() {
+            for (var g in groups) {
+                var objs, cb;
+                if (groups.hasOwnProperty(g)) {
+                    objs = groups[g].objs;
+                    cb = callbacks[groups[g].cbIndex];
+
+                    if (objs.length) {
+                        cb(objs);
+                        groups[g].objs = [];
+                    }
+                }
             }
         },
 

@@ -83,6 +83,23 @@
     </div>
 
     <div class="wrapper">
+        <ul class="fn fn-group">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="wrapper">
+        <ul class="fn fn-group">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <div class="wrapper">
         <div class="bg" lazy-bg="temp/bg.jpg"></div>
     </div>
 
@@ -104,6 +121,14 @@
         });
         lazyelem.listen('.fn-2 li', 'fn', function(obj) {
             obj.text('我的title是' + obj.attr('title'));
+        });
+        // 批量处理
+        var count = 0;
+        lazyelem.listen('.fn-group li', 'bat', function(objs) {
+            count++;
+            for (var i = 0; i < objs.length; i++) {
+                objs[i].text('我是第' + count + '批被处理的');
+            }
         });
     </script>
 
