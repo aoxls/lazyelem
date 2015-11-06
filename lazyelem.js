@@ -130,7 +130,7 @@
                     cbIndex = listener.cbIndex;
 
                 // 以下情况直接跳过本次循环： 元素不可见 | 不在屏幕区域内
-                if (obj.is(':hidden') || !that._isTrigger(obj)) {
+                if (that._isHidden(obj) || !that._isTrigger(obj)) {
                     continue;
                 }
 
@@ -213,6 +213,24 @@
         },
 
         /**
+         * 判断一个jquery对象是否可见
+         * @method _isHidden
+         * @param {jQuery Object} obj 单个jquery对象
+         * @return {Boolean}
+         */
+        _isHidden: function(obj) {
+            var elem = obj[0];
+
+            if (obj.css('display') === 'none' || !$.contains(elem.ownerDocument, elem )) {
+                return true;
+            }
+            if (elem.offsetWidth <= 0 && elem.offsetHeight <= 0) {
+                return true;
+            }
+            return false;
+        },
+
+        /**
          * 最小化一段html文本
          * @method _minHtml
          * @param {String} html 一段html代码文本
@@ -248,4 +266,4 @@
     // 附加到全局对象
     window.lazyelem = lazyelem;
 
-})(window, jQuery);
+})(window, window.jQuery || window.Zepto);
