@@ -257,6 +257,26 @@
          */
         config: function(opt) {
             $.extend(config, opt);
+        },
+
+        /**
+         * 清除监听对象
+         * @method clear
+         * @param {Object} elem 指定要清除的DOM对象
+         */
+        clear: function(elem) {
+            if (elem) {
+                for (var i = 0; i < listeners.length; i++) {
+                    if (elem === listeners[i].obj[0]) {
+                        listeners.splice(i, 1);
+                    }
+                }
+            }
+            else {
+                listeners = [];
+                groups = {};
+                callbacks = [];
+            }
         }
     };
 

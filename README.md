@@ -112,3 +112,10 @@ lazyelem.config({
 ```js
 lazyelem.detect();
 ```
+
+### clear
+
+清除对某个或全部对象的监听
+```js
+lazyelem.clear([DOM Object]);
+```
